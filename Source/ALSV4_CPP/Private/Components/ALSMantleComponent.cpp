@@ -174,6 +174,13 @@ bool UALSMantleComponent::MantleCheck(const FALSMantleTraceSettings& TraceSettin
 		return false;
 	}
 
+	// Can't mantle other players
+	if (HitResult.Actor != nullptr) {
+		if (Cast<AALSBaseCharacter>(HitResult.Actor) != nullptr) {
+			return false;
+		}
+	}
+
 	if (HitResult.GetComponent() != nullptr)
 	{
 		UPrimitiveComponent* PrimitiveComponent = HitResult.GetComponent();
