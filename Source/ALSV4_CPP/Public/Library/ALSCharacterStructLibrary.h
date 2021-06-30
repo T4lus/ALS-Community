@@ -255,16 +255,55 @@ struct FALSRotateInPlaceAsset
 
 
 USTRUCT(BlueprintType)
-struct FALSFootsteps : public FTableRowBase
+struct FALSFootstepsFX : public FTableRowBase
 {
 	GENERATED_BODY()
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, Category = "Surface")
 	TEnumAsByte<EPhysicalSurface> PhysicalSurface;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, Category = "Sound")
 	USoundBase* SoundCue;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, Category = "Sound")
+	EALSSpawnType SoundSpawnType;
+
+	UPROPERTY(EditAnywhere, Category = "Sound", meta = (EditCondition = "SoundSpawnType == EALSSpawnType::Attached"))
+	TEnumAsByte<EAttachLocation::Type> SoundAttachmentType;
+
+	UPROPERTY(EditAnywhere, Category = "Sound")
+	FVector SoundLocationOffset;
+
+	UPROPERTY(EditAnywhere, Category = "Sound")
+	FRotator SoundRotationOffset;
+
+	UPROPERTY(EditAnywhere, Category = "Decal")
+	UMaterialInterface* DecalMaterial;
+
+	UPROPERTY(EditAnywhere, Category = "Decal")
+	float DecalLifeSpan = 10.0f;
+
+	UPROPERTY(EditAnywhere, Category = "Decal")
+	FVector DecalSize;
+
+	UPROPERTY(EditAnywhere, Category = "Decal")
+	FVector DecalLocationOffset;
+
+	UPROPERTY(EditAnywhere, Category = "Decal")
+	FRotator DecalRotationOffset;
+
+	UPROPERTY(EditAnywhere, Category = "Niagara")
 	UNiagaraSystem* NiagaraSystem;
+
+	UPROPERTY(EditAnywhere, Category = "Niagara")
+	EALSSpawnType NiagaraSpawnType;
+
+	UPROPERTY(EditAnywhere, Category = "Niagara", meta = (EditCondition = "NiagaraSpawnType == EALSSpawnType::Attached"))
+	TEnumAsByte<EAttachLocation::Type> NiagaraAttachmentType;
+
+	UPROPERTY(EditAnywhere, Category = "Niagara")
+	FVector NiagaraLocationOffset;
+
+	UPROPERTY(EditAnywhere, Category = "Niagara")
+	FRotator NiagaraRotationOffset;
 };
