@@ -9,6 +9,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Engine/DataTable.h"
 #include "Runtime/Engine/Classes/Sound/SoundBase.h"
 #include "Animation/AnimNotifies/AnimNotify.h"
 #include "Library/ALSCharacterEnumLibrary.h"
@@ -29,7 +30,7 @@ class ALSV4_CPP_API UALSAnimNotifyFootstep : public UAnimNotify
 
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = AnimNotify)
-	USoundBase* Sound = nullptr;
+	UDataTable* FootstepsData = nullptr;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = AnimNotify)
 	FName AttachPointName = FName(TEXT("root"));

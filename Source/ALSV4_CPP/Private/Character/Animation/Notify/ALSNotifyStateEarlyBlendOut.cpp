@@ -10,8 +10,7 @@
 
 #include "Character/ALSBaseCharacter.h"
 
-void UALSNotifyStateEarlyBlendOut::NotifyTick(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation,
-                                              float FrameDeltaTime)
+void UALSNotifyStateEarlyBlendOut::NotifyTick(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, float FrameDeltaTime)
 {
 	if (!MeshComp || !MeshComp->GetAnimInstance())
 	{

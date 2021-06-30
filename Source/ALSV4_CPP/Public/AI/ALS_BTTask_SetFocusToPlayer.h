@@ -18,6 +18,10 @@ class ALSV4_CPP_API UALS_BTTask_SetFocusToPlayer : public UBTTaskNode
 	GENERATED_BODY()
 
 public:
+	UPROPERTY(EditAnywhere)
+	FBlackboardKeySelector Target;
+
+public:
 	UALS_BTTask_SetFocusToPlayer();
 
 	virtual EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) override;

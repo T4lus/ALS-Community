@@ -46,15 +46,13 @@ void UALSMantleComponent::BeginPlay()
 			MantleTimeline->AddInterpFloat(MantleTimelineCurve, TimelineUpdated);
 
 			OwnerCharacter->JumpPressedDelegate.AddUniqueDynamic(this, &UALSMantleComponent::OnOwnerJumpInput);
-			OwnerCharacter->RagdollStateChangedDelegate.AddUniqueDynamic(
-				this, &UALSMantleComponent::OnOwnerRagdollStateChanged);
+			OwnerCharacter->RagdollStateChangedDelegate.AddUniqueDynamic(this, &UALSMantleComponent::OnOwnerRagdollStateChanged);
 		}
 	}
 }
 
 
-void UALSMantleComponent::TickComponent(float DeltaTime, ELevelTick TickType,
-                                        FActorComponentTickFunction* ThisTickFunction)
+void UALSMantleComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
@@ -68,8 +66,7 @@ void UALSMantleComponent::TickComponent(float DeltaTime, ELevelTick TickType,
 	}
 }
 
-void UALSMantleComponent::MantleStart(float MantleHeight, const FALSComponentAndTransform& MantleLedgeWS,
-                                      EALSMantleType MantleType)
+void UALSMantleComponent::MantleStart(float MantleHeight, const FALSComponentAndTransform& MantleLedgeWS, EALSMantleType MantleType)
 {
 	if (!OwnerCharacter)
 	{
@@ -113,8 +110,7 @@ void UALSMantleComponent::MantleStart(float MantleHeight, const FALSComponentAnd
 	// This would be the location the actual animation starts at relative to the Target Transform.
 	FVector RotatedVector = MantleTarget.GetRotation().Vector() * MantleParams.StartingOffset.Y;
 	RotatedVector.Z = MantleParams.StartingOffset.Z;
-	const FTransform StartOffset(MantleTarget.Rotator(), MantleTarget.GetLocation() - RotatedVector,
-	                             FVector::OneVector);
+	const FTransform StartOffset(MantleTarget.Rotator(), MantleTarget.GetLocation() - RotatedVector, FVector::OneVector);
 	MantleAnimatedStartOffset = UALSMathLibrary::TransfromSub(StartOffset, MantleTarget);
 
 	// Step 5: Clear the Character Movement Mode and set the Movement State to Mantling
@@ -134,9 +130,7 @@ void UALSMantleComponent::MantleStart(float MantleHeight, const FALSComponentAnd
 	// Step 7: Play the Anim Montaget if valid.
 	if (IsValid(MantleParams.AnimMontage))
 	{
-		OwnerCharacter->GetMainAnimInstance()->Montage_Play(MantleParams.AnimMontage, MantleParams.PlayRate,
-		                                                    EMontagePlayReturnType::MontageLength,
-		                                                    MantleParams.StartingPosition, false);
+		OwnerCharacter->GetMainAnimInstance()->Montage_Play(MantleParams.AnimMontage, MantleParams.PlayRate, EMontagePlayReturnType::MontageLength, MantleParams.StartingPosition, false);
 	}
 }
 
@@ -148,11 +142,8 @@ bool UALSMantleComponent::MantleCheck(const FALSMantleTraceSettings& TraceSettin
 	}
 
 	// Step 1: Trace forward to find a wall / object the character cannot walk on.
-	const FVector& TraceDirection = OwnerCharacter->HasMovementInput()
-		                                ? OwnerCharacter->GetPlayerMovementInput()
-		                                : OwnerCharacter->GetActorForwardVector();
-	const FVector& CapsuleBaseLocation = UALSMathLibrary::GetCapsuleBaseLocation(
-		2.0f, OwnerCharacter->GetCapsuleComponent());
+	const FVector& TraceDirection = OwnerCharacter->HasMovementInput() ? OwnerCharacter->GetPlayerMovementInput() : OwnerCharacter->GetActorForwardVector();
+	const FVector& CapsuleBaseLocation = UALSMathLibrary::GetCapsuleBaseLocation(2.0f, OwnerCharacter->GetCapsuleComponent());
 	FVector TraceStart = CapsuleBaseLocation + TraceDirection * -30.0f;
 	TraceStart.Z += (TraceSettings.MaxLedgeHeight + TraceSettings.MinLedgeHeight) / 2.0f;
 	const FVector TraceEnd = TraceStart + TraceDirection * TraceSettings.ReachDistance;
@@ -165,8 +156,7 @@ bool UALSMantleComponent::MantleCheck(const FALSMantleTraceSettings& TraceSettin
 	Params.AddIgnoredActor(OwnerCharacter);
 
 	FHitResult HitResult;
-	World->SweepSingleByProfile(HitResult, TraceStart, TraceEnd, FQuat::Identity, FName(TEXT("IgnoreOnlyPawn")),
-	                            FCollisionShape::MakeCapsule(TraceSettings.ForwardTraceRadius, HalfHeight), Params);
+	World->SweepSingleByProfile(HitResult, TraceStart, TraceEnd, FQuat::Identity, FName(TEXT("IgnoreOnlyPawn")), FCollisionShape::MakeCapsule(TraceSettings.ForwardTraceRadius, HalfHeight), Params);
 
 	if (!HitResult.IsValidBlockingHit() || OwnerCharacter->GetCharacterMovement()->IsWalkable(HitResult))
 	{
@@ -201,9 +191,7 @@ bool UALSMantleComponent::MantleCheck(const FALSMantleTraceSettings& TraceSettin
 	FVector DownwardTraceStart = DownwardTraceEnd;
 	DownwardTraceStart.Z += TraceSettings.MaxLedgeHeight + TraceSettings.DownwardTraceRadius + 1.0f;
 
-	World->SweepSingleByChannel(HitResult, DownwardTraceStart, DownwardTraceEnd, FQuat::Identity,
-	                            ECC_GameTraceChannel2, FCollisionShape::MakeSphere(TraceSettings.DownwardTraceRadius),
-	                            Params);
+	World->SweepSingleByChannel(HitResult, DownwardTraceStart, DownwardTraceEnd, FQuat::Identity, ECC_GameTraceChannel2, FCollisionShape::MakeSphere(TraceSettings.DownwardTraceRadius), Params);
 
 
 	if (!OwnerCharacter->GetCharacterMovement()->IsWalkable(HitResult))
@@ -217,11 +205,8 @@ bool UALSMantleComponent::MantleCheck(const FALSMantleTraceSettings& TraceSettin
 
 	// Step 3: Check if the capsule has room to stand at the downward trace's location.
 	// If so, set that location as the Target Transform and calculate the mantle height.
-	const FVector& CapsuleLocationFBase = UALSMathLibrary::GetCapsuleLocationFromBase(
-		DownTraceLocation, 2.0f, OwnerCharacter->GetCapsuleComponent());
-	const bool bCapsuleHasRoom = UALSMathLibrary::CapsuleHasRoomCheck(OwnerCharacter->GetCapsuleComponent(),
-	                                                                  CapsuleLocationFBase, 0.0f,
-	                                                                  0.0f);
+	const FVector& CapsuleLocationFBase = UALSMathLibrary::GetCapsuleLocationFromBase(DownTraceLocation, 2.0f, OwnerCharacter->GetCapsuleComponent());
+	const bool bCapsuleHasRoom = UALSMathLibrary::CapsuleHasRoomCheck(OwnerCharacter->GetCapsuleComponent(), CapsuleLocationFBase, 0.0f, 0.0f);
 
 	if (!bCapsuleHasRoom)
 	{
@@ -229,10 +214,7 @@ bool UALSMantleComponent::MantleCheck(const FALSMantleTraceSettings& TraceSettin
 		return false;
 	}
 
-	const FTransform TargetTransform(
-		(InitialTraceNormal * FVector(-1.0f, -1.0f, 0.0f)).ToOrientationRotator(),
-		CapsuleLocationFBase,
-		FVector::OneVector);
+	const FTransform TargetTransform((InitialTraceNormal * FVector(-1.0f, -1.0f, 0.0f)).ToOrientationRotator(), CapsuleLocationFBase, FVector::OneVector);
 
 	const float MantleHeight = (CapsuleLocationFBase - OwnerCharacter->GetActorLocation()).Z;
 
@@ -257,16 +239,12 @@ bool UALSMantleComponent::MantleCheck(const FALSMantleTraceSettings& TraceSettin
 	return true;
 }
 
-void UALSMantleComponent::Server_MantleStart_Implementation(float MantleHeight,
-                                                            const FALSComponentAndTransform& MantleLedgeWS,
-                                                            EALSMantleType MantleType)
+void UALSMantleComponent::Server_MantleStart_Implementation(float MantleHeight, const FALSComponentAndTransform& MantleLedgeWS, EALSMantleType MantleType)
 {
 	Multicast_MantleStart(MantleHeight, MantleLedgeWS, MantleType);
 }
 
-void UALSMantleComponent::Multicast_MantleStart_Implementation(float MantleHeight,
-                                                               const FALSComponentAndTransform& MantleLedgeWS,
-                                                               EALSMantleType MantleType)
+void UALSMantleComponent::Multicast_MantleStart_Implementation(float MantleHeight, const FALSComponentAndTransform& MantleLedgeWS, EALSMantleType MantleType)
 {
 	if (OwnerCharacter && !OwnerCharacter->IsLocallyControlled())
 	{
@@ -286,9 +264,7 @@ void UALSMantleComponent::MantleUpdate(float BlendIn)
 	MantleTarget = UALSMathLibrary::MantleComponentLocalToWorld(MantleLedgeLS);
 
 	// Step 2: Update the Position and Correction Alphas using the Position/Correction curve set for each Mantle.
-	const FVector CurveVec = MantleParams.PositionCorrectionCurve
-	                                     ->GetVectorValue(
-		                                     MantleParams.StartingPosition + MantleTimeline->GetPlaybackPosition());
+	const FVector CurveVec = MantleParams.PositionCorrectionCurve->GetVectorValue(MantleParams.StartingPosition + MantleTimeline->GetPlaybackPosition());
 	const float PositionAlpha = CurveVec.X;
 	const float XYCorrectionAlpha = CurveVec.Y;
 	const float ZCorrectionAlpha = CurveVec.Z;
@@ -304,8 +280,7 @@ void UALSMantleComponent::MantleUpdate(float BlendIn)
 		                                   MantleActualStartOffset.GetLocation().Z
 	                                   },
 	                                   FVector::OneVector);
-	const FTransform& HzLerpResult =
-		UKismetMathLibrary::TLerp(MantleActualStartOffset, TargetHzTransform, XYCorrectionAlpha);
+	const FTransform& HzLerpResult = UKismetMathLibrary::TLerp(MantleActualStartOffset, TargetHzTransform, XYCorrectionAlpha);
 
 	// Blend into the animated vertical offset using the Z value of the Position/Correction Curve.
 	const FTransform TargetVtTransform(MantleActualStartOffset.GetRotation(),
@@ -315,8 +290,7 @@ void UALSMantleComponent::MantleUpdate(float BlendIn)
 		                                   MantleAnimatedStartOffset.GetLocation().Z
 	                                   },
 	                                   FVector::OneVector);
-	const FTransform& VtLerpResult =
-		UKismetMathLibrary::TLerp(MantleActualStartOffset, TargetVtTransform, ZCorrectionAlpha);
+	const FTransform& VtLerpResult = UKismetMathLibrary::TLerp(MantleActualStartOffset, TargetVtTransform, ZCorrectionAlpha);
 
 	const FTransform ResultTransform(HzLerpResult.GetRotation(),
 	                                 {
@@ -327,15 +301,11 @@ void UALSMantleComponent::MantleUpdate(float BlendIn)
 
 	// Blend from the currently blending transforms into the final mantle target using the X
 	// value of the Position/Correction Curve.
-	const FTransform& ResultLerp = UKismetMathLibrary::TLerp(
-		UALSMathLibrary::TransfromAdd(MantleTarget, ResultTransform), MantleTarget,
-		PositionAlpha);
+	const FTransform& ResultLerp = UKismetMathLibrary::TLerp(UALSMathLibrary::TransfromAdd(MantleTarget, ResultTransform), MantleTarget, PositionAlpha);
 
 	// Initial Blend In (controlled in the timeline curve) to allow the actor to blend into the Position/Correction
 	// curve at the midoint. This prevents pops when mantling an object lower than the animated mantle.
-	const FTransform& LerpedTarget =
-		UKismetMathLibrary::TLerp(UALSMathLibrary::TransfromAdd(MantleTarget, MantleActualStartOffset), ResultLerp,
-		                          BlendIn);
+	const FTransform& LerpedTarget = UKismetMathLibrary::TLerp(UALSMathLibrary::TransfromAdd(MantleTarget, MantleActualStartOffset), ResultLerp, BlendIn);
 
 	// Step 4: Set the actors location and rotation to the Lerped Target.
 	OwnerCharacter->SetActorLocationAndTargetRotation(LerpedTarget.GetLocation(), LerpedTarget.GetRotation().Rotator());

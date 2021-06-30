@@ -22,30 +22,25 @@ FTransform UALSMathLibrary::MantleComponentLocalToWorld(const FALSComponentAndTr
 
 TPair<float, float> UALSMathLibrary::FixDiagonalGamepadValues(const float X, const float Y)
 {
-	float ResultY = X * FMath::GetMappedRangeValueClamped(FVector2D(0.0f, 0.6f),
-	                                                      FVector2D(1.0f, 1.2f), FMath::Abs(Y));
+	float ResultY = X * FMath::GetMappedRangeValueClamped(FVector2D(0.0f, 0.6f), FVector2D(1.0f, 1.2f), FMath::Abs(Y));
 	ResultY = FMath::Clamp(ResultY, -1.0f, 1.0f);
-	float ResultX = Y * FMath::GetMappedRangeValueClamped(FVector2D(0.0f, 0.6f),
-	                                                      FVector2D(1.0f, 1.2f), FMath::Abs(X));
+	float ResultX = Y * FMath::GetMappedRangeValueClamped(FVector2D(0.0f, 0.6f), FVector2D(1.0f, 1.2f), FMath::Abs(X));
 	ResultX = FMath::Clamp(ResultX, -1.0f, 1.0f);
 	return TPair<float, float>(ResultY, ResultX);
 }
 
 FVector UALSMathLibrary::GetCapsuleBaseLocation(const float ZOffset, UCapsuleComponent* Capsule)
 {
-	return Capsule->GetComponentLocation() -
-		Capsule->GetUpVector() * (Capsule->GetScaledCapsuleHalfHeight() + ZOffset);
+	return Capsule->GetComponentLocation() - Capsule->GetUpVector() * (Capsule->GetScaledCapsuleHalfHeight() + ZOffset);
 }
 
-FVector UALSMathLibrary::GetCapsuleLocationFromBase(FVector BaseLocation, const float ZOffset,
-                                                    UCapsuleComponent* Capsule)
+FVector UALSMathLibrary::GetCapsuleLocationFromBase(FVector BaseLocation, const float ZOffset, UCapsuleComponent* Capsule)
 {
 	BaseLocation.Z += Capsule->GetScaledCapsuleHalfHeight() + ZOffset;
 	return BaseLocation;
 }
 
-bool UALSMathLibrary::CapsuleHasRoomCheck(UCapsuleComponent* Capsule, FVector TargetLocation, float HeightOffset,
-                                          float RadiusOffset)
+bool UALSMathLibrary::CapsuleHasRoomCheck(UCapsuleComponent* Capsule, FVector TargetLocation, float HeightOffset, float RadiusOffset)
 {
 	// Perform a trace to see if the capsule has room to be at the target location.
 	const float ZTarget = Capsule->GetScaledCapsuleHalfHeight_WithoutHemisphere() - RadiusOffset + HeightOffset;
@@ -62,8 +57,7 @@ bool UALSMathLibrary::CapsuleHasRoomCheck(UCapsuleComponent* Capsule, FVector Ta
 	Params.AddIgnoredActor(Capsule->GetOwner());
 
 	FHitResult HitResult;
-	World->SweepSingleByChannel(HitResult, TraceStart, TraceEnd, FQuat::Identity,
-	                            ECC_Visibility, FCollisionShape::MakeSphere(Radius), Params);
+	World->SweepSingleByChannel(HitResult, TraceStart, TraceEnd, FQuat::Identity, ECC_Visibility, FCollisionShape::MakeSphere(Radius), Params);
 
 	return !(HitResult.bBlockingHit || HitResult.bStartPenetrating);
 }
@@ -77,27 +71,21 @@ bool UALSMathLibrary::AngleInRange(float Angle, float MinAngle, float MaxAngle, 
 	return Angle >= MinAngle + Buffer && Angle <= MaxAngle - Buffer;
 }
 
-EALSMovementDirection UALSMathLibrary::CalculateQuadrant(EALSMovementDirection Current, float FRThreshold,
-                                                         float FLThreshold,
-                                                         float BRThreshold, float BLThreshold, float Buffer,
-                                                         float Angle)
+EALSMovementDirection UALSMathLibrary::CalculateQuadrant(EALSMovementDirection Current, float FRThreshold, float FLThreshold, float BRThreshold, float BLThreshold, float Buffer, float Angle)
 {
 	// Take the input angle and determine its quadrant (direction). Use the current Movement Direction to increase or
 	// decrease the buffers on the angle ranges for each quadrant.
-	if (AngleInRange(Angle, FLThreshold, FRThreshold, Buffer,
-	                 Current != EALSMovementDirection::Forward || Current != EALSMovementDirection::Backward))
+	if (AngleInRange(Angle, FLThreshold, FRThreshold, Buffer, Current != EALSMovementDirection::Forward || Current != EALSMovementDirection::Backward))
 	{
 		return EALSMovementDirection::Forward;
 	}
 
-	if (AngleInRange(Angle, FRThreshold, BRThreshold, Buffer,
-	                 Current != EALSMovementDirection::Right || Current != EALSMovementDirection::Left))
+	if (AngleInRange(Angle, FRThreshold, BRThreshold, Buffer, Current != EALSMovementDirection::Right || Current != EALSMovementDirection::Left))
 	{
 		return EALSMovementDirection::Right;
 	}
 
-	if (AngleInRange(Angle, BLThreshold, FLThreshold, Buffer,
-	                 Current != EALSMovementDirection::Right || Current != EALSMovementDirection::Left))
+	if (AngleInRange(Angle, BLThreshold, FLThreshold, Buffer, Current != EALSMovementDirection::Right || Current != EALSMovementDirection::Left))
 	{
 		return EALSMovementDirection::Left;
 	}

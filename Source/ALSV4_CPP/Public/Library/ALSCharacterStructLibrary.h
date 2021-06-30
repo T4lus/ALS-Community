@@ -10,6 +10,10 @@
 
 #include "CoreMinimal.h"
 #include "Engine/DataTable.h"
+
+#include "Chaos/ChaosEngineInterface.h"
+#include "NiagaraSystem.h"
+
 #include "Library/ALSCharacterEnumLibrary.h"
 
 #include "ALSCharacterStructLibrary.generated.h"
@@ -18,6 +22,8 @@ class UCurveVector;
 class UAnimMontage;
 class UAnimSequenceBase;
 class UCurveFloat;
+
+class UALSCharacterAnimInstance;
 
 USTRUCT(BlueprintType)
 struct FALSComponentAndTransform
@@ -245,4 +251,20 @@ struct FALSRotateInPlaceAsset
 
 	UPROPERTY(EditAnywhere)
 	float FastPlayRate = 1.0f;
+};
+
+
+USTRUCT(BlueprintType)
+struct FALSFootsteps : public FTableRowBase
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere)
+	TEnumAsByte<EPhysicalSurface> PhysicalSurface;
+
+	UPROPERTY(EditAnywhere)
+	USoundBase* SoundCue;
+
+	UPROPERTY(EditAnywhere)
+	UNiagaraSystem* NiagaraSystem;
 };

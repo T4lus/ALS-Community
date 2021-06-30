@@ -6,8 +6,10 @@
 // Contributors:    Doğa Can Yanıkoğlu
 
 #include "AI/ALS_BTTask_SetFocusToPlayer.h"
+
 #include "Runtime/Engine/Classes/Kismet/GameplayStatics.h"
 #include "AIController.h"
+#include "BehaviorTree/BlackboardComponent.h"
 
 UALS_BTTask_SetFocusToPlayer::UALS_BTTask_SetFocusToPlayer()
 {
@@ -20,6 +22,10 @@ EBTNodeResult::Type UALS_BTTask_SetFocusToPlayer::ExecuteTask(UBehaviorTreeCompo
 	if (Pawn)
 	{
 		OwnerComp.GetAIOwner()->SetFocus(Pawn);
+
+		UBlackboardComponent* MyBlackboard = OwnerComp.GetBlackboardComponent();
+		MyBlackboard->SetValueAsObject(Target.SelectedKeyName, Pawn);
+
 		return EBTNodeResult::Succeeded;
 	}
 

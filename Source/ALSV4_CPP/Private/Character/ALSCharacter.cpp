@@ -12,8 +12,7 @@
 #include "AI/ALSAIController.h"
 #include "Kismet/GameplayStatics.h"
 
-AALSCharacter::AALSCharacter(const FObjectInitializer& ObjectInitializer)
-	: Super(ObjectInitializer)
+AALSCharacter::AALSCharacter(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
 	HeldObjectRoot = CreateDefaultSubobject<USceneComponent>(TEXT("HeldObjectRoot"));
 	HeldObjectRoot->SetupAttachment(GetMesh());
@@ -34,8 +33,7 @@ void AALSCharacter::ClearHeldObject()
 	SkeletalMesh->SetAnimInstanceClass(nullptr);
 }
 
-void AALSCharacter::AttachToHand(UStaticMesh* NewStaticMesh, USkeletalMesh* NewSkeletalMesh, UClass* NewAnimClass,
-                                 bool bLeftHand, FVector Offset)
+void AALSCharacter::AttachToHand(UStaticMesh* NewStaticMesh, USkeletalMesh* NewSkeletalMesh, UClass* NewAnimClass, bool bLeftHand, FVector Offset)
 {
 	ClearHeldObject();
 
@@ -62,8 +60,7 @@ void AALSCharacter::AttachToHand(UStaticMesh* NewStaticMesh, USkeletalMesh* NewS
 		AttachBone = TEXT("VB RHS_ik_hand_gun");
 	}
 
-	HeldObjectRoot->AttachToComponent(GetMesh(),
-	                                  FAttachmentTransformRules::SnapToTargetNotIncludingScale, AttachBone);
+	HeldObjectRoot->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, AttachBone);
 	HeldObjectRoot->SetRelativeLocation(Offset);
 }
 
